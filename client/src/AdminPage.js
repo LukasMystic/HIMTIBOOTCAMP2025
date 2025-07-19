@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-
+console.log(process.env.REACT_APP_BASE_API_URL);
 const API_URL = `${process.env.REACT_APP_BASE_API_URL}/api/admin`;
 const PUBLIC_API_URL = `$${process.env.REACT_APP_BASE_API_URL}/api`;
 

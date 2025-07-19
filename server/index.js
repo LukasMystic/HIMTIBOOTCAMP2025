@@ -128,22 +128,28 @@ app.post('/api/register', async (req, res) => {
 
 // --- Settings Routes ---
 app.get('/api/settings/registration', async (req, res) => {
-    try {
-        const setting = await Setting.findOne({ key: 'registrationStatus' });
-        res.status(200).json({ isOpen: setting ? setting.value : false });
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching registration status.', error });
-    }
+  try {
+    console.log("[DEBUG] /api/settings/registration hit");
+    const setting = await Setting.findOne({ key: 'registrationStatus' });
+    console.log("[DEBUG] Setting:", setting);
+    res.status(200).json({ isOpen: setting ? setting.value : false });
+  } catch (error) {
+    console.error("[ERROR] Failed to fetch registration setting:", error);
+    res.status(500).json({ message: 'Error fetching registration status.', error });
+  }
 });
+
 
 // --- Protected Admin Routes ---
 app.get('/api/admin/participants', adminAuth, async (req, res) => {
-    try {
-        const participants = await Participant.find({}).sort({ registrationDate: -1 });
-        res.status(200).json(participants);
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching participants.', error });
-    }
+  try {
+    console.log("[DEBUG] /api/admin/participants hit");
+    const participants = await Participant.find({}).sort({ registrationDate: -1 });
+    res.status(200).json(participants);
+  } catch (error) {
+    console.error("[ERROR] Failed to fetch participants:", error);
+    res.status(500).json({ message: 'Error fetching participants.', error });
+  }
 });
 
 app.post('/api/admin/participants', adminAuth, async (req, res) => {
