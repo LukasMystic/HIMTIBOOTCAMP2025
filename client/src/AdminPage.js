@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-console.log(process.env.REACT_APP_BASE_API_URL);
-const API_URL = `${process.env.REACT_APP_BASE_API_URL}/api/admin`;
-const PUBLIC_API_URL = `$${process.env.REACT_APP_BASE_API_URL}/api`;
 
+const API_URL = `${process.env.REACT_APP_BASE_API_URL}/api/admin`;
+const PUBLIC_API_URL = `${process.env.REACT_APP_BASE_API_URL}/api`;
 
 const setCookie = (name, value, days) => {
     let expires = "";
@@ -26,9 +25,8 @@ const getCookie = (name) => {
 };
 
 const removeCookie = (name) => {
-    document.cookie = name + '=; Max-Age=-99999999;';
+    document.cookie = name + '=; Max-Age=-99999999; path=/;';
 };
-
 
 const ParticipantModal = ({ isOpen, onClose, onSave, participant, isLoading }) => {
     const [formData, setFormData] = useState({});
@@ -94,7 +92,6 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
 
 function AdminPage() {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-
     const [token, setToken] = useState(getCookie('admin_token'));
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -102,7 +99,8 @@ function AdminPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     
-    const [isRegistrationOpen, setIsRegistrationOpen] = useState(true);
+   
+    const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
     const [isToggling, setIsToggling] = useState(false);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -117,6 +115,7 @@ function AdminPage() {
         }
         setSortConfig({ key, direction });
     };
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -145,27 +144,35 @@ function AdminPage() {
         setParticipants([]);
     };
 
-    const fetchData = useCallback(async () => {
+    const fetchRegistrationStatus = useCallback(async () => {
+        try {
+            const response = await fetch(`${PUBLIC_API_URL}/settings/registration`);
+            if (!response.ok) {
+                console.error('Failed to fetch registration status.');
+                return;
+            }
+            const data = await response.json();
+            setIsRegistrationOpen(data.isOpen);
+        } catch (err) {
+            console.error("Error fetching registration status:", err.message);
+        }
+    }, []);
+
+    const fetchParticipantData = useCallback(async () => {
         if (!token) return;
         setIsLoading(true);
         setError('');
         try {
-            const participantsResponse = await fetch(`${API_URL}/participants`, {
+            const response = await fetch(`${API_URL}/participants`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
-            if (participantsResponse.status === 401 || participantsResponse.status === 403) {
+            if (response.status === 401 || response.status === 403) {
                 handleLogout();
                 throw new Error('Your session has expired. Please log in again.');
             }
-            if (!participantsResponse.ok) throw new Error('Failed to fetch participant data.');
-            const participantsData = await participantsResponse.json();
-            setParticipants(participantsData);
-
-            const settingsResponse = await fetch(`${PUBLIC_API_URL}/settings/registration`);
-            if (!settingsResponse.ok) throw new Error('Failed to fetch registration status.');
-            const settingsData = await settingsResponse.json();
-            setIsRegistrationOpen(settingsData.isOpen);
-
+            if (!response.ok) throw new Error('Failed to fetch participant data.');
+            const data = await response.json();
+            setParticipants(data);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -186,7 +193,6 @@ function AdminPage() {
             
             setIsRegistrationOpen(data.isOpen);
             alert(data.message);
-
         } catch (err) {
             setError(err.message);
         } finally {
@@ -200,29 +206,22 @@ function AdminPage() {
         setError('');
         
         const isUpdate = !!formData._id;
-        
         const url = isUpdate ? `${API_URL}/participants/${formData._id}` : `${API_URL}/participants`;
         const method = isUpdate ? 'PUT' : 'POST';
         const payload = { ...formData, name: formData.fullName };
-        if (formData.fullName) {
-            delete payload.fullName;
-        }
-        const headers = { 
-            'Authorization': `Bearer ${token}`, 
-            'Content-Type': 'application/json' 
-        };
+        delete payload.fullName;
 
         try {
             const response = await fetch(url, {
                 method: method,
-                headers: headers,
+                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'Failed to save participant.');
             
             setIsModalOpen(false);
-            fetchData();
+            fetchParticipantData();
         } catch (err) {
             setError(err.message);
             alert(`Error: ${err.message}`);
@@ -240,7 +239,7 @@ function AdminPage() {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
             if (!response.ok) throw new Error('Failed to delete participant.');
-            fetchData();
+            fetchParticipantData();
         } catch (err) {
             setError(err.message);
         }
@@ -262,6 +261,7 @@ function AdminPage() {
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);
+            a.remove();
         } catch (err) {
             setError(err.message);
         }
@@ -269,9 +269,10 @@ function AdminPage() {
 
     useEffect(() => {
         if (token) {
-            fetchData();
+            fetchRegistrationStatus();
+            fetchParticipantData();
         }
-    }, [token, fetchData]);
+    }, [token, fetchParticipantData, fetchRegistrationStatus]);
 
     const openCreateModal = () => {
         setSelectedParticipant(null);
