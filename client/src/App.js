@@ -1,12 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import CyberpunkGame from './CyberpunkGame';
 import AdminPage from './AdminPage.js';
 import NotFound from './NotFound.js';
 import MouseBackground from './MouseBackground';
 
+console.log('ENV:', process.env.REACT_APP_BASE_API_URL);
+const REGISTRATION_API_URL = `${process.env.REACT_APP_BASE_API_URL}/api/register`;
+const SETTINGS_API_URL = `${process.env.REACT_APP_BASE_API_URL}/api/settings/registration`;
 
-const REGISTRATION_API_URL = `${process.env.BASE_API_URL}/api/register`;
-const SETTINGS_API_URL = `${process.env.BASE_API_URL}/api/settings/registration`;
 
 const useIntersectionObserver = (options) => {
   const [entry, setEntry] = useState(null);
@@ -639,7 +640,7 @@ const memoizedTypewriter = useMemo(() => (
       };
   }, [sectionRefs]);
 
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [, setMousePos] = useState({ x: 0, y: 0 });
   useEffect(() => {
     const handleMouseMove = (event) => setMousePos({ x: event.clientX, y: event.clientY });
     const isTouchDevice = 'ontouchstart' in window;

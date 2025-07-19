@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-const API_URL = `${process.env.BASE_API_URL}/api/admin`;
-const PUBLIC_API_URL = `${process.env.BASE_API_URL}/api`;
+const API_URL = `${process.env.REACT_APP_BASE_API_URL}/api/admin`;
+const PUBLIC_API_URL = `$${process.env.REACT_APP_BASE_API_URL}/api`;
+
 
 const setCookie = (name, value, days) => {
     let expires = "";
