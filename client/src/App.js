@@ -4,7 +4,6 @@ import AdminPage from './AdminPage.js';
 import NotFound from './NotFound.js';
 import MouseBackground from './MouseBackground';
 
-console.log('ENV:', process.env.REACT_APP_BASE_API_URL);
 const REGISTRATION_API_URL = `${process.env.REACT_APP_BASE_API_URL}/api/register`;
 const SETTINGS_API_URL = `${process.env.REACT_APP_BASE_API_URL}/api/settings/registration`;
 
