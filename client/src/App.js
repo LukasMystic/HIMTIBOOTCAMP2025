@@ -5,8 +5,8 @@ import NotFound from './NotFound.js';
 import MouseBackground from './MouseBackground';
 
 
-const REGISTRATION_API_URL = 'http://localhost:5000/api/register';
-const SETTINGS_API_URL = 'http://localhost:5000/api/settings/registration';
+const REGISTRATION_API_URL = `${process.env.BASE_API_URL}/api/register`;
+const SETTINGS_API_URL = `${process.env.BASE_API_URL}/api/settings/registration`;
 
 const useIntersectionObserver = (options) => {
   const [entry, setEntry] = useState(null);

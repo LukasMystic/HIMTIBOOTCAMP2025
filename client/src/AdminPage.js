@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-const API_URL = 'http://localhost:5000/api/admin';
-const PUBLIC_API_URL = 'http://localhost:5000/api';
+const API_URL = `${process.env.BASE_API_URL}/api/admin`;
+const PUBLIC_API_URL = `${process.env.BASE_API_URL}/api`;
 
-// --- NEW: Cookie Helper Functions ---
 const setCookie = (name, value, days) => {
     let expires = "";
     if (days) {
@@ -30,7 +29,6 @@ const removeCookie = (name) => {
 };
 
 
-// --- Reusable Modal Component for Create/Update ---
 const ParticipantModal = ({ isOpen, onClose, onSave, participant, isLoading }) => {
     const [formData, setFormData] = useState({});
 
@@ -76,7 +74,6 @@ const ParticipantModal = ({ isOpen, onClose, onSave, participant, isLoading }) =
     );
 };
 
-// --- Reusable Confirmation Modal for Deletion ---
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message }) => {
     if (!isOpen) return null;
     return (
@@ -196,26 +193,19 @@ function AdminPage() {
         }
     };
 
-    // In AdminPage.js
 
     const handleSaveParticipant = async (formData) => {
         setIsSaving(true);
         setError('');
         
-        // The logic to determine update vs. create remains the same
         const isUpdate = !!formData._id;
         
-        // BUG FIX: Use the new admin endpoint for creation, not the public one
         const url = isUpdate ? `${API_URL}/participants/${formData._id}` : `${API_URL}/participants`;
         const method = isUpdate ? 'PUT' : 'POST';
-
-        // The payload logic is now correct for both endpoints
         const payload = { ...formData, name: formData.fullName };
         if (formData.fullName) {
             delete payload.fullName;
         }
-        
-        // Add the correct authorization header for the creation request
         const headers = { 
             'Authorization': `Bearer ${token}`, 
             'Content-Type': 'application/json' 
@@ -224,7 +214,7 @@ function AdminPage() {
         try {
             const response = await fetch(url, {
                 method: method,
-                headers: headers, // Use the headers with the token
+                headers: headers,
                 body: JSON.stringify(payload),
             });
             const data = await response.json();
@@ -346,7 +336,7 @@ function AdminPage() {
                             const isSorted = sortConfig.key === key;
                             const sortSymbol = isSorted
                                 ? (sortConfig.direction === 'asc' ? '↑' : '↓')
-                                : '⇅'; // Default symbol for unsorted
+                                : '⇅'; 
 
                             return (
                                 <th
