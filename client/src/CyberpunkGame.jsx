@@ -222,10 +222,7 @@ const CyberpunkGame = () => {
       {!hasStarted && (
         <p className="text-slate-400 mt-3 text-sm animate-pulse">Click the canvas to start</p>
       )}
-      {!gameOver && hasStarted && (
-        <p className="text-slate-500 text-sm mt-4">Use controls to move and shoot</p>
-      )}
-
+      
       {gameOver && (
         <button
           onClick={resetGame}
@@ -235,36 +232,42 @@ const CyberpunkGame = () => {
         </button>
       )}
 
-      {/* Touch Controls for all devices */}
+      {/* Controls and Instructions */}
       {hasStarted && !gameOver && (
-        <div className="mt-4 flex justify-center gap-4">
-          <button
-            onMouseDown={() => keys.current["ArrowLeft"] = true}
-            onMouseUp={() => keys.current["ArrowLeft"] = false}
-            onTouchStart={() => keys.current["ArrowLeft"] = true}
-            onTouchEnd={() => keys.current["ArrowLeft"] = false}
-            className="bg-fuchsia-500 text-white px-6 py-3 rounded-lg shadow-md active:scale-95 text-xl"
-          >
-            ◀
-          </button>
-          <button
-            onMouseDown={() => keys.current[" "] = true}
-            onMouseUp={() => keys.current[" "] = false}
-            onTouchStart={() => keys.current[" "] = true}
-            onTouchEnd={() => keys.current[" "] = false}
-            className="bg-cyan-500 text-white px-6 py-3 rounded-lg shadow-md active:scale-95 text-xl"
-          >
-            🔫
-          </button>
-          <button
-            onMouseDown={() => keys.current["ArrowRight"] = true}
-            onMouseUp={() => keys.current["ArrowRight"] = false}
-            onTouchStart={() => keys.current["ArrowRight"] = true}
-            onTouchEnd={() => keys.current["ArrowRight"] = false}
-            className="bg-fuchsia-500 text-white px-6 py-3 rounded-lg shadow-md active:scale-95 text-xl"
-          >
-            ▶
-          </button>
+        <div className="mt-4 text-center">
+            <div className="flex justify-center gap-4">
+              <button
+                onMouseDown={() => keys.current["ArrowLeft"] = true}
+                onMouseUp={() => keys.current["ArrowLeft"] = false}
+                onTouchStart={() => keys.current["ArrowLeft"] = true}
+                onTouchEnd={() => keys.current["ArrowLeft"] = false}
+                className="bg-fuchsia-500 text-white px-6 py-3 rounded-lg shadow-md active:scale-95 text-xl"
+              >
+                ◀
+              </button>
+              <button
+                onMouseDown={() => keys.current[" "] = true}
+                onMouseUp={() => keys.current[" "] = false}
+                onTouchStart={() => keys.current[" "] = true}
+                onTouchEnd={() => keys.current[" "] = false}
+                className="bg-cyan-500 text-white px-6 py-3 rounded-lg shadow-md active:scale-95 text-xl"
+              >
+                🔫
+              </button>
+              <button
+                onMouseDown={() => keys.current["ArrowRight"] = true}
+                onMouseUp={() => keys.current["ArrowRight"] = false}
+                onTouchStart={() => keys.current["ArrowRight"] = true}
+                onTouchEnd={() => keys.current["ArrowRight"] = false}
+                className="bg-fuchsia-500 text-white px-6 py-3 rounded-lg shadow-md active:scale-95 text-xl"
+              >
+                ▶
+              </button>
+            </div>
+            <div className="mt-4">
+                <p className="text-slate-500 text-sm sm:hidden">Use on-screen controls to play.</p>
+                <p className="hidden sm:block text-slate-500 text-sm">Use on-screen controls, or ← → keys to move and Spacebar to shoot.</p>
+            </div>
         </div>
       )}
     </div>
