@@ -49,6 +49,12 @@ const CyberpunkGame = () => {
   }, []);
 
   useEffect(() => {
+    if (laserAudio.current) laserAudio.current.volume = 0.2;
+    if (explosionAudio.current) explosionAudio.current.volume = 0.2;
+    if (deathAudio.current) deathAudio.current.volume = 0.2;
+  }, [hasStarted]);
+
+  useEffect(() => {
     if (!hasStarted) return;
 
     const canvas = canvasRef.current;
@@ -74,8 +80,10 @@ const CyberpunkGame = () => {
     const shoot = () => {
       if (player.current.bullets.length < 5) {
         player.current.bullets.push({ x: player.current.x + 18, y: player.current.y, speed: 5 });
-        laserAudio.current.currentTime = 0;
-        laserAudio.current.play().catch(() => {});
+        if (laserAudio.current) {
+            laserAudio.current.currentTime = 0;
+            laserAudio.current.play().catch(() => {});
+        }
       }
     };
 
@@ -84,12 +92,14 @@ const CyberpunkGame = () => {
       ctx.fillRect(0, 0, BASE_WIDTH, BASE_HEIGHT);
 
       if (gameOver) {
+        ctx.textAlign = "center";
         ctx.fillStyle = "#00ffff";
         ctx.font = "24px monospace";
-        ctx.fillText("GAME OVER", 120, 150);
+        ctx.fillText("GAME OVER", BASE_WIDTH / 2, 150);
         ctx.fillStyle = "#ff00ff";
         ctx.font = "16px monospace";
-        ctx.fillText(`Final Score: ${score.current}`, 130, 180);
+        ctx.fillText(`Final Score: ${score.current}`, BASE_WIDTH / 2, 180);
+        ctx.textAlign = "left"; // Reset for next game session
         return;
       }
 
@@ -124,8 +134,10 @@ const CyberpunkGame = () => {
           e.y + e.height > player.current.y &&
           e.y < player.current.y + player.current.height
         ) {
-          deathAudio.current.currentTime = 0;
-          deathAudio.current.play().catch(() => {});
+          if(deathAudio.current) {
+            deathAudio.current.currentTime = 0;
+            deathAudio.current.play().catch(() => {});
+          }
           setGameOver(true);
         }
       });
@@ -141,8 +153,10 @@ const CyberpunkGame = () => {
             player.current.bullets.splice(bi, 1);
             enemies.current.splice(ei, 1);
             score.current += 10;
-            explosionAudio.current.currentTime = 0;
-            explosionAudio.current.play().catch(() => {});
+            if(explosionAudio.current){
+                explosionAudio.current.currentTime = 0;
+                explosionAudio.current.play().catch(() => {});
+            }
           }
         });
       });
@@ -166,10 +180,13 @@ const CyberpunkGame = () => {
     if (!triggeredSound) {
       [laserAudio, explosionAudio, deathAudio].forEach(audio => {
         try {
-          audio.current?.play().then(() => {
-            audio.current.pause();
-            audio.current.currentTime = 0;
-          });
+          if(audio.current){
+            audio.current.volume = 0.2;
+            audio.current?.play().then(() => {
+                audio.current.pause();
+                audio.current.currentTime = 0;
+            });
+          }
         } catch {}
       });
       setTriggeredSound(true);
@@ -206,7 +223,7 @@ const CyberpunkGame = () => {
         <p className="text-slate-400 mt-3 text-sm animate-pulse">Click the canvas to start</p>
       )}
       {!gameOver && hasStarted && (
-        <p className="text-slate-500 text-sm mt-4">← → move | space to shoot</p>
+        <p className="text-slate-500 text-sm mt-4">Use controls to move and shoot</p>
       )}
 
       {gameOver && (
@@ -218,27 +235,33 @@ const CyberpunkGame = () => {
         </button>
       )}
 
-{/* Mobile Touch Controls */}
+      {/* Touch Controls for all devices */}
       {hasStarted && !gameOver && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-20 flex justify-center gap-4 sm:hidden">
+        <div className="mt-4 flex justify-center gap-4">
           <button
+            onMouseDown={() => keys.current["ArrowLeft"] = true}
+            onMouseUp={() => keys.current["ArrowLeft"] = false}
             onTouchStart={() => keys.current["ArrowLeft"] = true}
             onTouchEnd={() => keys.current["ArrowLeft"] = false}
-            className="bg-fuchsia-500 text-white px-4 py-2 rounded shadow-md active:scale-95"
+            className="bg-fuchsia-500 text-white px-6 py-3 rounded-lg shadow-md active:scale-95 text-xl"
           >
             ◀
           </button>
           <button
+            onMouseDown={() => keys.current[" "] = true}
+            onMouseUp={() => keys.current[" "] = false}
             onTouchStart={() => keys.current[" "] = true}
             onTouchEnd={() => keys.current[" "] = false}
-            className="bg-cyan-500 text-white px-4 py-2 rounded shadow-md active:scale-95"
+            className="bg-cyan-500 text-white px-6 py-3 rounded-lg shadow-md active:scale-95 text-xl"
           >
             🔫
           </button>
           <button
+            onMouseDown={() => keys.current["ArrowRight"] = true}
+            onMouseUp={() => keys.current["ArrowRight"] = false}
             onTouchStart={() => keys.current["ArrowRight"] = true}
             onTouchEnd={() => keys.current["ArrowRight"] = false}
-            className="bg-fuchsia-500 text-white px-4 py-2 rounded shadow-md active:scale-95"
+            className="bg-fuchsia-500 text-white px-6 py-3 rounded-lg shadow-md active:scale-95 text-xl"
           >
             ▶
           </button>

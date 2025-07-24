@@ -31,6 +31,18 @@ const removeCookie = (name) => {
 const ParticipantModal = ({ isOpen, onClose, onSave, participant, isLoading }) => {
     const [formData, setFormData] = useState({});
 
+    const majors = [
+        "Computer Science",
+        "Visual Communication Design",
+        "Public Relations",
+        "Communication",
+        "Entreprenuership Business Creation",
+        "Digital Business Innovation",
+        "Interactive Design & Technology",
+        "Digital Psychology",
+        "Interior Design"
+    ];
+
     useEffect(() => {
         setFormData(participant || {
             fullName: '', nim: '', binusianEmail: '', privateEmail: '', phone: '', major: ''
@@ -59,7 +71,13 @@ const ParticipantModal = ({ isOpen, onClose, onSave, participant, isLoading }) =
                         <div><label className="text-sm text-slate-300">Binusian Email</label><input type="email" name="binusianEmail" value={formData.binusianEmail || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white"/></div>
                         <div><label className="text-sm text-slate-300">Private Email</label><input type="email" name="privateEmail" value={formData.privateEmail || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white"/></div>
                         <div><label className="text-sm text-slate-300">Phone</label><input type="tel" name="phone" value={formData.phone || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white"/></div>
-                        <div><label className="text-sm text-slate-300">Major</label><input type="text" name="major" value={formData.major || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white"/></div>
+                        <div>
+                            <label className="text-sm text-slate-300">Major</label>
+                            <select name="major" value={formData.major || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white">
+                                <option value="" disabled>Select a Major</option>
+                                {majors.map(major => <option key={major} value={major}>{major}</option>)}
+                            </select>
+                        </div>
                     </div>
                     <div className="flex justify-end gap-4 pt-4">
                         <button type="button" onClick={onClose} className="px-4 py-2 border border-slate-600 rounded-md text-slate-300 hover:bg-slate-700">Cancel</button>

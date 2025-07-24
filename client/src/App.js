@@ -61,7 +61,6 @@ const getReturnValues = (countDown) => {
 };
 
 
-// --- Glitch Effect & Custom Scrollbar CSS ---
 const GlitchStyles = () => (
     <style>{`
         .glitch {
@@ -121,7 +120,6 @@ const GlitchStyles = () => (
             background: linear-gradient(to bottom, #ff4dff, #4dffff);
         }
 
-        /* ADDED: More fluid countdown animation */
         @keyframes slide-down {
             0% { transform: translateY(-100%); }
             100% { transform: translateY(0); }
@@ -139,8 +137,7 @@ const GlitchStyles = () => (
         .floating-logo {
             animation: float 6s ease-in-out infinite;
         }
-        /* --- NEW ANIMATIONS --- */
-
+        
         @keyframes glow-pulse {
         0% {
             box-shadow: 0 0 5px rgba(0, 255, 255, 0.2), 0 0 10px rgba(0, 255, 255, 0.2);
@@ -211,24 +208,20 @@ const GlitchStyles = () => (
     `}</style>
 );
 
-// --- Reusable AI-themed Icon Components ---
 const CalendarIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block w-5 h-5 mr-2 text-cyan-400"> <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect><line x1="16" x2="16" y1="2" y2="6"></line><line x1="8" x2="8" y1="2" y2="6"></line><line x1="3" x2="21" y1="10" y2="10"></line> </svg> );
 const GlobeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline-block w-5 h-5 mr-2 text-cyan-400"><circle cx="12" cy="12" r="10"></circle><line x1="2" x2="22" y1="12" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg> );
 const ModelIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 20V10.2c0-1.2.6-2.3 1.7-2.9l4-2.3c1-.6 2.3-.6 3.3 0l4 2.3c1.1.6 1.7 1.7 1.7 2.9V20"/><path d="M8 14v6"/><path d="M16 14v6"/><path d="M12 12v8"/><path d="M12 12l4-2.3"/><path d="M12 12 8 9.7"/><path d="m8.8 7.5-4 2.3"/><path d="M15.2 7.5l4 2.3"/><path d="M12 6V2l-2 2"/><path d="M12 2l2 2"/></svg>;
 const DeployIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22a7 7 0 0 0 7-7h-4a3 3 0 0 1-3-3V8a3 3 0 0 1-3-3H2a7 7 0 0 0 7 7v4a3 3 0 0 1 3 3z"/><path d="M12 10V8a2 2 0 1 0-4 0v2"/><path d="M18 12h4v4a2 2 0 0 1-2 2h-2v-6z"/><path d="M22 13V7a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>;
 const DataIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect width="8" height="4" x="8" y="2" rx="1" ry="1"></rect></svg>;
 
-// --- Footer Social Icons ---
 const InstagramIcon = () => ( <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect> <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path> <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line> </svg> );
 const LinkedinIcon = () => ( <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path> <rect x="2" y="9" width="4" height="12"></rect> <circle cx="4" cy="4" r="2"></circle> </svg> );
 const XIcon = () => ( <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"> <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/> </svg> );
 const FacebookIcon = () => ( <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path> </svg> );
 const WebsiteIcon = () => ( <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"/></svg> );
 
-// --- Animated Background Component ---
 const AnimatedCircuitBackground = () => ( <div className="scan-overlay absolute top-0 left-0 w-full h-full overflow-hidden z-0 bg-[#0d0d0d]"> <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px]"></div> <div className="absolute inset-0 bg-[radial-gradient(circle_500px_at_50%_200px,#3e003e33,transparent)]"></div> </div> );
 
-// --- Animated Section Component ---
 const AnimatedSection = React.forwardRef(({ children, className = '', id = '' }, ref) => {
     const [setNode, entry] = useIntersectionObserver({ threshold: 0.1 });
     const isVisible = entry?.isIntersecting;
@@ -251,7 +244,6 @@ const AnimatedSection = React.forwardRef(({ children, className = '', id = '' },
     );
 });
 
-// --- Section Separator Component ---
 const SectionSeparator = () => (
     <div className="w-full h-20 flex items-center justify-center my-8 md:my-12" aria-hidden="true">
         <svg width="300" height="20" className="overflow-visible">
@@ -270,7 +262,6 @@ const SectionSeparator = () => (
     </div>
 );
 
-// --- Countdown Timer Component ---
 const CountdownTimer = ({ targetDate }) => {
     const { days, hours, minutes, seconds } = useCountdown(targetDate);
 
@@ -278,7 +269,6 @@ const CountdownTimer = ({ targetDate }) => {
         return <span className="text-2xl md:text-3xl font-bold text-cyan-400 tracking-widest">See you at the event!</span>;
     }
 
-    // MOBILE-PROOF: Adjusted gaps and font sizes
     return (
         <div className="w-full max-w-4xl mx-auto text-center">
             <div className="flex justify-center gap-4 md:gap-8">
@@ -312,7 +302,6 @@ const CountdownTimer = ({ targetDate }) => {
     );
 };
 
-// --- Confirmation Modal Component ---
 const ConfirmationModal = ({ data, onConfirm, onCancel, isLoading }) => (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div className="w-full max-w-md bg-[#0d0d0d] border-2 border-fuchsia-500/50 rounded-lg shadow-2xl p-6 md:p-8 space-y-6">
@@ -335,26 +324,59 @@ const ConfirmationModal = ({ data, onConfirm, onCancel, isLoading }) => (
     </div>
 );
 
-// --- Registration Form Component ---
 const RegistrationForm = ({ onSuccessfulRegistration, isRegistrationOpen, isLoadingStatus }) => {
   const [formData, setFormData] = useState({ fullName: '', nim: '', binusianEmail: '', privateEmail: '', phone: '', major: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const majors = [
+    "Computer Science",
+    "Visual Communication Design",
+    "Public Relations",
+    "Communication",
+    "Entreprenuership Business Creation",
+    "Digital Business Innovation",
+    "Interactive Design & Technology",
+    "Digital Psychology",
+    "Interior Design"
+  ];
+
   const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handlePreSubmit = (e) => {
     e.preventDefault();
     setMessage(null);
+
+    if (/\d/.test(formData.fullName)) {
+        setMessage({ type: 'error', text: 'Full name cannot contain numbers.' });
+        return;
+    }
     if (isNaN(parseInt(formData.nim))) {
         setMessage({ type: 'error', text: 'NIM must be a number.' });
+        return;
+    }
+    if (formData.nim.length !== 10) {
+        setMessage({ type: 'error', text: 'NIM must be exactly 10 digits.' });
         return;
     }
     if (!formData.binusianEmail.endsWith('@binus.ac.id')) {
         setMessage({ type: 'error', text: 'Please use a valid Binusian email ending with @binus.ac.id.' });
         return;
     }
+    if (formData.privateEmail === formData.binusianEmail) {
+        setMessage({ type: 'error', text: 'Private email cannot be the same as your Binusian email.' });
+        return;
+    }
+    if (!formData.phone.startsWith('08')) {
+        setMessage({ type: 'error', text: 'Phone number must start with "08".' });
+        return;
+    }
+    if (formData.phone.length < 10 || formData.phone.length > 13) {
+        setMessage({ type: 'error', text: 'Phone number must be between 10 and 13 digits.' });
+        return;
+    }
+
     setIsModalOpen(true);
   };
 
@@ -414,7 +436,13 @@ const RegistrationForm = ({ onSuccessfulRegistration, isRegistrationOpen, isLoad
               <div> <label htmlFor="binusianEmail" className="block text-sm font-medium text-cyan-300 mb-2">Binusian Email</label> <input type="email" name="binusianEmail" id="binusianEmail" required value={formData.binusianEmail} onChange={handleInputChange} className="w-full px-4 py-2 bg-slate-900 border-2 border-slate-700 rounded-md text-white focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:outline-none transition-all" /> </div>
               <div> <label htmlFor="privateEmail" className="block text-sm font-medium text-cyan-300 mb-2">Private Email</label> <input type="email" name="privateEmail" id="privateEmail" required value={formData.privateEmail} onChange={handleInputChange} className="w-full px-4 py-2 bg-slate-900 border-2 border-slate-700 rounded-md text-white focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:outline-none transition-all" /> </div>
               <div> <label htmlFor="phone" className="block text-sm font-medium text-cyan-300 mb-2">Phone Number</label> <input type="tel" name="phone" id="phone" required value={formData.phone} onChange={handleInputChange} className="w-full px-4 py-2 bg-slate-900 border-2 border-slate-700 rounded-md text-white focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:outline-none transition-all" /> </div>
-              <div> <label htmlFor="major" className="block text-sm font-medium text-cyan-300 mb-2">Major</label> <input type="text" name="major" id="major" required value={formData.major} onChange={handleInputChange} className="w-full px-4 py-2 bg-slate-900 border-2 border-slate-700 rounded-md text-white focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:outline-none transition-all" /> </div>
+              <div>
+                <label htmlFor="major" className="block text-sm font-medium text-cyan-300 mb-2">Major</label>
+                <select name="major" id="major" required value={formData.major} onChange={handleInputChange} className="w-full px-4 py-2 bg-slate-900 border-2 border-slate-700 rounded-md text-white focus:ring-2 focus:ring-fuchsia-500 focus:border-fuchsia-500 focus:outline-none transition-all">
+                  <option value="" disabled>Select a Major</option>
+                  {majors.map(major => <option key={major} value={major}>{major}</option>)}
+                </select>
+              </div>
             </div>
             <div>
               <button type="submit" className="w-full flex justify-center py-3 px-4 border-2 border-fuchsia-500 rounded-md shadow-lg text-sm font-bold text-white bg-fuchsia-500/20 hover:bg-fuchsia-500/40 hover:shadow-fuchsia-500/50 focus:outline-none transition-all transform hover:scale-105">
@@ -446,7 +474,6 @@ const SuccessView = ({ onUndo }) => (
     </div>
 );
 
-// --- FAQ Item Component ---
 const FaqItem = ({ item, index, activeIndex, setActiveIndex }) => {
     const isOpen = index === activeIndex;
     return (
@@ -466,7 +493,6 @@ const FaqItem = ({ item, index, activeIndex, setActiveIndex }) => {
     );
 };
 
-// --- Navbar Component ---
 const Navbar = ({ navLinks, onLinkClick, activeSection }) => {
     const [isVisible, setIsVisible] = useState(false);
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -530,7 +556,6 @@ const Navbar = ({ navLinks, onLinkClick, activeSection }) => {
 };
 
 
-// --- Main App Component ---
 function App() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [activeFaqIndex, setActiveFaqIndex] = useState(null);
@@ -580,7 +605,6 @@ function App() {
   };
 
 
-// --- Typewriter Component ---
 const Typewriter = React.memo(({ text, speed = 50 }) => {
     const [displayedText, setDisplayedText] = useState('');
 
@@ -601,7 +625,6 @@ const Typewriter = React.memo(({ text, speed = 50 }) => {
     return (
         <span>
             {displayedText}
-            {/* The caret now disappears when typing is complete */}
             {displayedText.length === text.length ? null : <span className="blinking-caret">|</span>}
         </span>
     );
@@ -619,7 +642,6 @@ const memoizedTypewriter = useMemo(() => (
                   }
               });
           },
-          // Adjusted rootMargin for better section highlighting on mobile
           { rootMargin: '-40% 0px -60% 0px' }
       );
 
