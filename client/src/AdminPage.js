@@ -30,24 +30,23 @@ const removeCookie = (name) => {
 
 const ParticipantModal = ({ isOpen, onClose, onSave, participant, isLoading }) => {
     const [formData, setFormData] = useState({});
+    const [image, setImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState('');
+    const [error, setError] = useState('');
 
-    const majors = [
-        "Computer Science",
-        "Visual Communication Design",
-        "Public Relations",
-        "Communication",
-        "Entreprenuership Business Creation",
-        "Digital Business Innovation",
-        "Interactive Design & Technology",
-        "Digital Psychology",
-        "Interior Design"
-    ];
+    const majors = [ "Computer Science", "Visual Communication Design", "Public Relations", "Communication", "Entreprenuership Business Creation", "Digital Business Innovation", "Interactive Design & Technology", "Digital Psychology", "Interior Design" ];
 
     useEffect(() => {
-        setFormData(participant || {
-            fullName: '', nim: '', binusianEmail: '', privateEmail: '', phone: '', major: ''
-        });
-    }, [participant]);
+        if (participant) {
+            setFormData(participant);
+            setImagePreview(participant.imageUrl || '');
+        } else {
+            setFormData({ name: '', nim: '', binusianEmail: '', privateEmail: '', phone: '', major: '' });
+            setImagePreview('');
+        }
+        setImage(null);
+        setError('');
+    }, [participant, isOpen]);
 
     if (!isOpen) return null;
 
@@ -55,18 +54,36 @@ const ParticipantModal = ({ isOpen, onClose, onSave, participant, isLoading }) =
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                setError('File is too large (Max 5MB).');
+                return;
+            }
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+            if (!allowedTypes.includes(file.type)) {
+                setError('Invalid file type. Only JPG, PNG, are allowed.');
+                return;
+            }
+            setError('');
+            setImage(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSave(formData);
+        onSave(formData, image);
     };
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="w-full max-w-lg bg-[#0d0d0d] border-2 border-cyan-500/50 rounded-lg shadow-2xl p-8 space-y-6">
+            <div className="w-full max-w-2xl bg-[#0d0d0d] border-2 border-cyan-500/50 rounded-lg shadow-2xl p-8 space-y-6">
                 <h2 className="text-2xl font-bold text-cyan-400">{participant ? 'Edit Participant' : 'Add New Participant'}</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label className="text-sm text-slate-300">Full Name</label><input type="text" name="fullName" value={formData.fullName || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white"/></div>
+                        <div><label className="text-sm text-slate-300">Full Name</label><input type="text" name="name" value={formData.name || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white"/></div>
                         <div><label className="text-sm text-slate-300">NIM</label><input type="text" name="nim" value={formData.nim || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white"/></div>
                         <div><label className="text-sm text-slate-300">Binusian Email</label><input type="email" name="binusianEmail" value={formData.binusianEmail || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white"/></div>
                         <div><label className="text-sm text-slate-300">Private Email</label><input type="email" name="privateEmail" value={formData.privateEmail || ''} onChange={handleChange} required className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-md text-white"/></div>
@@ -77,6 +94,12 @@ const ParticipantModal = ({ isOpen, onClose, onSave, participant, isLoading }) =
                                 <option value="" disabled>Select a Major</option>
                                 {majors.map(major => <option key={major} value={major}>{major}</option>)}
                             </select>
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="text-sm text-slate-300">Payment Proof</label>
+                            <input type="file" name="image" onChange={handleImageChange} accept="image/png, image/jpeg, image/jpg, image/gif" className="w-full mt-1 text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-fuchsia-500/20 file:text-fuchsia-300 hover:file:bg-fuchsia-500/40"/>
+                            {imagePreview && <img src={imagePreview} alt="Proof Preview" className="mt-2 rounded-md max-h-40" />}
+                            {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
                         </div>
                     </div>
                     <div className="flex justify-end gap-4 pt-4">
@@ -117,7 +140,6 @@ function AdminPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     
-   
     const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
     const [isToggling, setIsToggling] = useState(false);
 
@@ -218,23 +240,32 @@ function AdminPage() {
         }
     };
 
-
-    const handleSaveParticipant = async (formData) => {
+    const handleSaveParticipant = async (formData, image) => {
         setIsSaving(true);
         setError('');
         
         const isUpdate = !!formData._id;
         const url = isUpdate ? `${API_URL}/participants/${formData._id}` : `${API_URL}/participants`;
         const method = isUpdate ? 'PUT' : 'POST';
-        const payload = { ...formData, name: formData.fullName };
-        delete payload.fullName;
+
+        let body;
+        const headers = { 'Authorization': `Bearer ${token}` };
+
+        if (image) {
+            body = new FormData();
+            Object.keys(formData).forEach(key => {
+                if (key !== 'imageUrl') {
+                    body.append(key, formData[key]);
+                }
+            });
+            body.append('image', image);
+        } else {
+            headers['Content-Type'] = 'application/json';
+            body = JSON.stringify(formData);
+        }
 
         try {
-            const response = await fetch(url, {
-                method: method,
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
+            const response = await fetch(url, { method, headers, body });
             const data = await response.json();
             if (!response.ok) throw new Error(data.message || 'Failed to save participant.');
             
@@ -298,7 +329,7 @@ function AdminPage() {
     };
 
     const openEditModal = (participant) => {
-        setSelectedParticipant({ ...participant, fullName: participant.name });
+        setSelectedParticipant(participant);
         setIsModalOpen(true);
     };
 
@@ -348,29 +379,21 @@ function AdminPage() {
                             { label: 'Name', key: 'name' },
                             { label: 'NIM', key: 'nim' },
                             { label: 'Binusian Email', key: 'binusianEmail' },
-                            { label: 'Private Email', key: 'privateEmail' },
-                            { label: 'Phone', key: 'phone' },
+                            { label: 'Payment Proof', key: 'imageUrl' },
                             { label: 'Major', key: 'major' },
                             { label: 'Actions', key: null }
                             ].map(({ label, key }) => {
                             const isSorted = sortConfig.key === key;
-                            const sortSymbol = isSorted
-                                ? (sortConfig.direction === 'asc' ? '↑' : '↓')
-                                : '⇅'; 
+                            const sortSymbol = isSorted ? (sortConfig.direction === 'asc' ? '↑' : '↓') : '⇅'; 
 
                             return (
-                                <th
-                                key={label}
-                                className="px-6 py-3 text-left text-xs font-medium text-cyan-300 uppercase tracking-wider cursor-pointer select-none"
-                                onClick={() => key && handleSort(key)}
-                                >
+                                <th key={label} className="px-6 py-3 text-left text-xs font-medium text-cyan-300 uppercase tracking-wider cursor-pointer select-none" onClick={() => key && handleSort(key)}>
                                 {label} <span className="inline-block">{key ? sortSymbol : ''}</span>
                                 </th>
                             );
                             })}
                         </tr>
                         </thead>
-
                             <tbody className="divide-y divide-slate-800">
                                 {isLoading ? (
                                     <tr><td colSpan="7" className="text-center py-4">Loading data...</td></tr>
@@ -378,18 +401,21 @@ function AdminPage() {
                                         if (!sortConfig.key) return 0;
                                         const valA = (a[sortConfig.key] || '').toString().toLowerCase();
                                         const valB = (b[sortConfig.key] || '').toString().toLowerCase();
-
                                         if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
                                         if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
                                         return 0;
                                     }).map(p => (
-
                                     <tr key={p._id} className="hover:bg-slate-800/50">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.nim}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.binusianEmail}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">{p.privateEmail}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">{p.phone}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                            {p.imageUrl ? (
+                                                <a href={p.imageUrl} target="_blank" rel="noopener noreferrer">
+                                                    <img src={p.imageUrl} alt="Proof" className="h-10 w-10 object-cover rounded-md"/>
+                                                </a>
+                                            ) : 'N/A'}
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.major}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             <button onClick={() => openEditModal(p)} className="text-white hover:text-gray-300 mr-4">Edit</button>

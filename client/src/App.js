@@ -307,12 +307,25 @@ const ConfirmationModal = ({ data, onConfirm, onCancel, isLoading }) => (
         <div className="w-full max-w-md bg-[#0d0d0d] border-2 border-fuchsia-500/50 rounded-lg shadow-2xl p-6 md:p-8 space-y-6">
             <h2 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Confirm Your Data</h2>
             <div className="space-y-3 text-xs md:text-sm">
-                {Object.entries(data).map(([key, value]) => (
-                    <div key={key} className="flex flex-col sm:flex-row sm:justify-between border-b border-slate-700 pb-2">
-                        <span className="font-bold text-cyan-300 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
-                        <span className="text-slate-200 text-left sm:text-right break-all">{value}</span>
-                    </div>
-                ))}
+                {Object.entries(data).map(([key, value]) => {
+                    if (key === 'imagePreview' && value) {
+                        return (
+                            <div key={key} className="flex flex-col border-b border-slate-700 pb-2">
+                                <span className="font-bold text-cyan-300 capitalize">Payment Proof</span>
+                                <img src={value} alt="Payment proof preview" className="mt-2 rounded-lg max-h-48 w-auto object-contain" />
+                            </div>
+                        )
+                    }
+                    if (key !== 'imagePreview') {
+                        return (
+                             <div key={key} className="flex flex-col sm:flex-row sm:justify-between border-b border-slate-700 pb-2">
+                                <span className="font-bold text-cyan-300 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
+                                <span className="text-slate-200 text-left sm:text-right break-all">{value}</span>
+                            </div>
+                        )
+                    }
+                    return null;
+                })}
             </div>
             <div className="flex flex-col sm:flex-row justify-end gap-4 pt-4">
                 <button onClick={onCancel} disabled={isLoading} className="px-6 py-2 border-2 border-slate-600 rounded-md text-slate-300 hover:bg-slate-700 transition-colors order-2 sm:order-1">Edit</button>
@@ -326,73 +339,68 @@ const ConfirmationModal = ({ data, onConfirm, onCancel, isLoading }) => (
 
 const RegistrationForm = ({ onSuccessfulRegistration, isRegistrationOpen, isLoadingStatus }) => {
   const [formData, setFormData] = useState({ fullName: '', nim: '', binusianEmail: '', privateEmail: '', phone: '', major: '' });
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const majors = [
-    "Computer Science",
-    "Visual Communication Design",
-    "Public Relations",
-    "Communication",
-    "Entreprenuership Business Creation",
-    "Digital Business Innovation",
-    "Interactive Design & Technology",
-    "Digital Psychology",
-    "Interior Design"
-  ];
+  const majors = [ "Computer Science", "Visual Communication Design", "Public Relations", "Communication", "Entreprenuership Business Creation", "Digital Business Innovation", "Interactive Design & Technology", "Digital Psychology", "Interior Design" ];
 
   const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            setMessage({ type: 'error', text: 'File is too large. Maximum size is 5MB.' });
+            setImage(null);
+            setImagePreview('');
+            e.target.value = null; 
+            return;
+        }
+        setImage(file);
+        setImagePreview(URL.createObjectURL(file));
+        setMessage(null);
+    }
+  };
 
   const handlePreSubmit = (e) => {
     e.preventDefault();
     setMessage(null);
 
-    if (/\d/.test(formData.fullName)) {
-        setMessage({ type: 'error', text: 'Full name cannot contain numbers.' });
+    if (!image) {
+        setMessage({ type: 'error', text: 'Please upload your proof of payment.' });
         return;
     }
-    if (isNaN(parseInt(formData.nim))) {
-        setMessage({ type: 'error', text: 'NIM must be a number.' });
-        return;
-    }
-    if (formData.nim.length !== 10) {
-        setMessage({ type: 'error', text: 'NIM must be exactly 10 digits.' });
-        return;
-    }
-    if (!formData.binusianEmail.endsWith('@binus.ac.id')) {
-        setMessage({ type: 'error', text: 'Please use a valid Binusian email ending with @binus.ac.id.' });
-        return;
-    }
-    if (formData.privateEmail === formData.binusianEmail) {
-        setMessage({ type: 'error', text: 'Private email cannot be the same as your Binusian email.' });
-        return;
-    }
-    if (!formData.phone.startsWith('08')) {
-        setMessage({ type: 'error', text: 'Phone number must start with "08".' });
-        return;
-    }
-    if (formData.phone.length < 10 || formData.phone.length > 13) {
-        setMessage({ type: 'error', text: 'Phone number must be between 10 and 13 digits.' });
+    
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+    if (!allowedTypes.includes(image.type)) {
+        setMessage({ type: 'error', text: 'Only .png, .jpg, .jpeg format allowed!' });
         return;
     }
 
+    if (/\d/.test(formData.fullName)) { setMessage({ type: 'error', text: 'Full name cannot contain numbers.' }); return; }
+    if (isNaN(parseInt(formData.nim))) { setMessage({ type: 'error', text: 'NIM must be a number.' }); return; }
+    if (formData.nim.length !== 10) { setMessage({ type: 'error', text: 'NIM must be exactly 10 digits.' }); return; }
+    if (!formData.binusianEmail.endsWith('@binus.ac.id')) { setMessage({ type: 'error', text: 'Please use a valid Binusian email ending with @binus.ac.id.' }); return; }
+    if (formData.privateEmail === formData.binusianEmail) { setMessage({ type: 'error', text: 'Private email cannot be the same as your Binusian email.' }); return; }
+    if (!formData.phone.startsWith('08')) { setMessage({ type: 'error', text: 'Phone number must start with "08".' }); return; }
+    if (formData.phone.length < 10 || formData.phone.length > 13) { setMessage({ type: 'error', text: 'Phone number must be between 10 and 13 digits.' }); return; }
+    
     setIsModalOpen(true);
   };
 
   const handleConfirmSubmit = async () => {
     setIsLoading(true);
     setMessage(null);
+    
+    const data = new FormData();
+    Object.keys(formData).forEach(key => data.append(key, formData[key]));
+    data.append('image', image);
+
     try {
-      const payload = {
-          fullName: formData.fullName,
-          nim: Number(formData.nim),
-          binusianEmail: formData.binusianEmail,
-          privateEmail: formData.privateEmail,
-          phone: formData.phone,
-          major: formData.major,
-      };
-      const response = await fetch(REGISTRATION_API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const response = await fetch(REGISTRATION_API_URL, { method: 'POST', body: data });
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || 'Something went wrong');
       onSuccessfulRegistration();
@@ -423,7 +431,7 @@ const RegistrationForm = ({ onSuccessfulRegistration, isRegistrationOpen, isLoad
 
   return (
     <>
-      {isModalOpen && <ConfirmationModal data={formData} onConfirm={handleConfirmSubmit} onCancel={() => setIsModalOpen(false)} isLoading={isLoading} />}
+      {isModalOpen && <ConfirmationModal data={{...formData, imagePreview}} onConfirm={handleConfirmSubmit} onCancel={() => setIsModalOpen(false)} isLoading={isLoading} />}
       <div className="w-full max-w-3xl mx-auto bg-black/50 backdrop-blur-md rounded-lg shadow-2xl p-6 md:p-8 space-y-8 border border-fuchsia-500/50 shadow-fuchsia-500/20">
         <div className="text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Join the Network</h2>
@@ -443,6 +451,10 @@ const RegistrationForm = ({ onSuccessfulRegistration, isRegistrationOpen, isLoad
                   {majors.map(major => <option key={major} value={major}>{major}</option>)}
                 </select>
               </div>
+              <div className="md:col-span-2">
+                <label htmlFor="image" className="block text-sm font-medium text-cyan-300 mb-2">Upload Payment Proof (max 5MB)</label>
+                <input type="file" name="image" id="image" required accept="image/png, image/jpeg, image/jpg, image/gif" onChange={handleImageChange} className="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-fuchsia-500/20 file:text-fuchsia-300 hover:file:bg-fuchsia-500/40" />
+              </div>
             </div>
             <div>
               <button type="submit" className="w-full flex justify-center py-3 px-4 border-2 border-fuchsia-500 rounded-md shadow-lg text-sm font-bold text-white bg-fuchsia-500/20 hover:bg-fuchsia-500/40 hover:shadow-fuchsia-500/50 focus:outline-none transition-all transform hover:scale-105">
@@ -456,6 +468,45 @@ const RegistrationForm = ({ onSuccessfulRegistration, isRegistrationOpen, isLoad
   );
 };
 
+const PaymentDetails = () => {
+    const [copied, setCopied] = useState(false);
+    const accountNumber = '6105415226';
+    const amount = 'IDR [........]';
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(accountNumber);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <div className="w-full max-w-3xl mx-auto bg-black/50 backdrop-blur-md rounded-lg shadow-2xl p-6 md:p-8 border border-cyan-500/50 shadow-cyan-500/20 mb-8">
+            <h3 className="text-xl md:text-2xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-400">Payment Details</h3>
+            <div className="mt-6 flex flex-col items-center gap-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Bank_Central_Asia.svg/2560px-Bank_Central_Asia.svg.png" alt="BCA Logo" className="h-8 bg-white px-3 py-1 rounded-md" />
+                <div className="text-center mt-2">
+                    <p className="text-slate-400 text-sm">Transfer Amount</p>
+                    <p className="text-cyan-300 text-3xl font-bold tracking-wider">{amount}</p>
+                </div>
+                <div className="text-center">
+                    <p className="text-slate-200 text-2xl font-mono tracking-wider">{accountNumber}</p>
+                    <p className="text-slate-400 text-sm">a/n ANDREAS EDWARD PUTRA JATMIKO</p>
+                </div>
+                <button
+                    onClick={handleCopy}
+                    className="px-4 py-2 text-xs border-2 border-slate-600 rounded-md text-slate-300 hover:bg-slate-700 transition-colors w-48"
+                >
+                    {copied ? 'Copied!' : 'Copy Account Number'}
+                </button>
+            </div>
+            <div className="mt-6 text-center text-xs text-amber-400/80 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                <p className="font-bold">Important:</p>
+                <p>One payment transfer is valid for one participant only. Please do not combine payments for multiple people.</p>
+            </div>
+        </div>
+    );
+};
+
 
 const SuccessView = ({ onUndo }) => (
     <div className="min-h-screen flex flex-col items-center justify-center text-center p-4 md:p-8 relative overflow-hidden">
@@ -463,7 +514,21 @@ const SuccessView = ({ onUndo }) => (
         <div className="relative z-10 w-full max-w-2xl mx-auto bg-black/50 backdrop-blur-md rounded-lg shadow-2xl p-6 md:p-8 space-y-8 border border-green-500/50 shadow-green-500/20">
             <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-cyan-400">Registration Complete</h2>
             <p className="text-slate-300 text-base md:text-lg">Your node has been successfully added to the network.</p>
-            <p className="text-slate-400">The final step is to join our WhatsApp group to receive all bootcamp communications and updates.</p>
+            <div className="text-left p-4 border border-cyan-500/30 rounded-lg bg-black/20">
+                <h3 className="text-lg font-bold text-cyan-300">Final Steps:</h3>
+                <ol className="list-decimal list-inside mt-2 space-y-2 text-slate-300">
+                    <li>
+                        Ensure your payment of <strong className="text-white">IDR [........]</strong> has been sent to the account below.
+                        <div className="mt-2 p-2 bg-slate-900/50 rounded-md text-center">
+                           <p className="font-mono text-white">BCA: 6105415226</p>
+                           <p className="text-xs text-slate-400">a/n ANDREAS EDWARD PUTRA JATMIKO</p>
+                        </div>
+                    </li>
+                    <li>
+                        Join our WhatsApp group to receive all bootcamp communications and updates. This is mandatory.
+                    </li>
+                </ol>
+            </div>
             <a href="https://chat.whatsapp.com/FoiQcXxAwz7BmOWQUyj4S0" target="_blank" rel="noopener noreferrer" className="inline-block w-full py-4 bg-green-500/20 text-green-300 border-2 border-green-500 rounded-md font-semibold shadow-[0_0_20px_rgba(0,255,0,0.3)] hover:bg-green-500/30 hover:shadow-[0_0_30px_rgba(0,255,0,0.5)] transition-all transform hover:scale-105">
                 Join WhatsApp Group
             </a>
@@ -526,7 +591,7 @@ const Navbar = ({ navLinks, onLinkClick, activeSection }) => {
     return (
         <nav className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${isVisible || isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'}`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16 bg-black/50 backdrop-blur-md border-b border-fuchsia-500/30 rounded-b-lg px-4 md:px-6">
+                <div className="flex items-center justify-between h-20 bg-black/50 backdrop-blur-md border-b border-fuchsia-500/30 rounded-b-lg px-4 md:px-6">
                     <div className="flex items-center">
                         <img src="/assets/Logo HIMTI.png" alt="HIMTI Logo" className="h-8 w-8" />
                     </div>
@@ -566,6 +631,7 @@ function App() {
 
   const sectionRefs = useMemo(() => ({
       about: React.createRef(),
+      poster: React.createRef(),
       speaker: React.createRef(),
       timeline: React.createRef(),
       faq: React.createRef(),
@@ -740,6 +806,17 @@ const memoizedTypewriter = useMemo(() => (
         <AnimatedSection id="about" ref={sectionRefs.about}> <section className="max-w-4xl mx-auto text-center px-4"> <h2 className="flicker-title text-2xl md:text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Bootcamp Protocol</h2> <p className="text-slate-300 text-base md:text-lg leading-relaxed"> This isn't just another workshop. The HIMTI AI Bootcamp is a 4-day intensive program designed to take you from the fundamentals of machine learning to deploying your own AI models. You'll work on hands-on projects, learn from industry-relevant case studies, and collaborate with fellow tech enthusiasts. </p> </section> </AnimatedSection>
         
         <SectionSeparator />
+
+        <AnimatedSection ref={sectionRefs.poster}>
+            <section className="max-w-xl mx-auto px-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Event Poster</h2>
+                <div className="bg-black/50 p-2 rounded-lg border border-fuchsia-500/30 hover:border-fuchsia-500 transition-all transform hover:-translate-y-2 duration-300 shadow-lg">
+                    <img src="https://placehold.co/800x1200/0d0d0d/ff00ff?text=Event+Poster" alt="Event Poster" className="w-full h-auto object-cover rounded-md" />
+                </div>
+            </section>
+        </AnimatedSection>
+
+        <SectionSeparator />
         
         <AnimatedSection>
             <section className="max-w-5xl mx-auto flex flex-col items-center px-4">
@@ -811,6 +888,7 @@ const memoizedTypewriter = useMemo(() => (
 
         <AnimatedSection id="register" ref={sectionRefs.register}>
             <section className="pt-16 px-4">
+              <PaymentDetails />
               <RegistrationForm 
                 onSuccessfulRegistration={() => setIsSubmitted(true)} 
                 isRegistrationOpen={isRegistrationOpen}
