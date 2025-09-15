@@ -925,7 +925,7 @@ const Typewriter = React.memo(({ text, speed = 50 }) => {
 });
 
 const memoizedTypewriter = useMemo(() => (
-  <Typewriter text="From Theory to Deployment: Master the Art of Artificial Intelligence." />
+  <Typewriter text="Practical AI: Hands-on AI Deployment." />
 ), []);
 
   useEffect(() => {
