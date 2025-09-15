@@ -220,7 +220,7 @@ function AdminPage() {
         }
     }, [token]);
 
-    const handleToggleRegistration = async () => {
+    const handleToggleRegistration = useCallback(async () => {
         setIsToggling(true);
         setError('');
         try {
@@ -238,7 +238,7 @@ function AdminPage() {
         } finally {
             setIsToggling(false);
         }
-    };
+    }, [token]);
 
     const handleSaveParticipant = async (formData, image) => {
         setIsSaving(true);
@@ -272,7 +272,6 @@ function AdminPage() {
             setIsModalOpen(false);
             fetchParticipantData();
         } catch (err) {
-            setError(err.message);
             alert(`Error: ${err.message}`);
         } finally {
             setIsSaving(false);
@@ -323,6 +322,15 @@ function AdminPage() {
         }
     }, [token, fetchParticipantData, fetchRegistrationStatus]);
 
+    // Automatically close registration when participant count reaches 35
+    useEffect(() => {
+        if (participants.length >= 35 && isRegistrationOpen) {
+            console.log('Participant limit reached. Automatically closing registration.');
+            handleToggleRegistration();
+        }
+    }, [participants, isRegistrationOpen, handleToggleRegistration]);
+
+
     const openCreateModal = () => {
         setSelectedParticipant(null);
         setIsModalOpen(true);
@@ -364,6 +372,9 @@ function AdminPage() {
                     <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
                         <h1 className="text-3xl font-bold text-cyan-400">Admin Dashboard</h1>
                         <div className="flex flex-wrap gap-4 items-center">
+                            <span className="text-lg font-semibold text-fuchsia-400">
+                                Participants: {participants.length} / 35
+                            </span>
                             <button onClick={openCreateModal} className="px-4 py-2 bg-fuchsia-500/20 text-fuchsia-300 border-2 border-fuchsia-500 rounded-md font-semibold hover:bg-fuchsia-500/30 transition-colors">Add Participant</button>
                             <button onClick={handleToggleRegistration} disabled={isToggling} className={`px-4 py-2 rounded-md font-semibold border-2 transition-colors disabled:opacity-50 ${isRegistrationOpen ? 'bg-red-500/20 text-red-300 border-red-500 hover:bg-red-500/30' : 'bg-green-500/20 text-green-300 border-green-500 hover:bg-green-500/30'}`}>{isToggling ? 'Updating...' : (isRegistrationOpen ? 'Close Registration' : 'Open Registration')}</button>
                             <button onClick={handleExport} className="px-4 py-2 bg-blue-500/20 text-blue-300 border-2 border-blue-500 rounded-md font-semibold hover:bg-blue-500/30 transition-colors">Export CSV</button>
@@ -376,6 +387,7 @@ function AdminPage() {
                         <thead className="bg-slate-900/50">
                         <tr>
                             {[
+                            { label: 'No.', key: null },
                             { label: 'Name', key: 'name' },
                             { label: 'NIM', key: 'nim' },
                             { label: 'Binusian Email', key: 'binusianEmail' },
@@ -404,8 +416,9 @@ function AdminPage() {
                                         if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
                                         if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
                                         return 0;
-                                    }).map(p => (
+                                    }).map((p, index) => (
                                     <tr key={p._id} className="hover:bg-slate-800/50">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">{index + 1}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.nim}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.binusianEmail}</td>
