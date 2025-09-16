@@ -268,6 +268,8 @@ const DataIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height
 const MenuIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>;
 const CloseIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 6-12 12"/><path d="m6 6 12 12"/></svg>;
 const ChevronDownIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>;
+// Add this with your other icon components
+const WhatsappIcon = () => <svg className="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M16.75 13.96c.25.13.41.2.52.34.11.14.15.33.11.52-.04.19-.22.38-.47.52-.25.14-1.33.6-1.55.66-.22.06-1.03.22-1.21.22-.18 0-1.53-.28-1.75-.41-.22-.13-.53-.33-.64-.47-.11-.14-.28-.38-.28-.56s-.11-.51.11-.7.27-.26.39-.26c.12 0 .28.03.39.03s.22.03.33-.3.11-.69.11-1.03c0-.34-.08-.56-.2-.69-.12-.13-.28-.13-.39-.13h-.06c-.11 0-.22 0-.33.03s-.22.03-.33.03-.22.03-.33.06c-.11.03-.22.06-.33.09s-.22.06-.33.11c-.11.05-.22.11-.3.18-.08.07-.15.15-.22.24-.07.09-.12.18-.18.29s-.11.23-.15.34c-.04.11-.08.23-.11.34s-.04.22-.04.33c0 .11 0 .22.03.33s.03.22.03.33.03.22.06.33c.03.11.06.22.09.33s.09.22.15.33c.06.11.12.22.2.33s.15.22.24.33c.09.11.18.22.29.33s.23.22.36.33c.13.11.28.22.42.33s.3.22.47.33c.17.11.34.22.53.33s.39.22.6.33c.21.11.42.2.64.28s.44.14.68.18c.24.04.48.06.73.06h.11c.06 0 .11 0 .17-.02s.11-.02.17-.03c.06 0 .11-.02.17-.03s.11-.03.17-.05c.06-.02.11-.03.17-.06a.9.9 0 0 0 .15-.09c.05-.03.1-.06.14-.1.04-.04.09-.09.12-.14s.06-.1.09-.17c.03-.07.05-.14.06-.22s.03-.17.03-.26c0-.09-.02-.18-.05-.28-.03-.1-.08-.19-.14-.28-.06-.09-.13-.18-.22-.26-.09-.08-.2-.15-.31-.22-.11-.07-.23-.13-.36-.18-.13-.05-.28-.1-.44-.13-.16-.03-.33-.06-.5-.06s-.36.03-.5.06a1.07 1.07 0 0 1-.41-.11c-.13-.07-.22-.15-.28-.24-.06-.09-.09-.2-.09-.3v-.03c0-.06.02-.12.05-.18a.4.4 0 0 1 .11-.14c.04-.04.09-.08.14-.11l.18-.11c.06-.03.12-.06.18-.08.06-.02.13-.04.2-.06.07-.02.14-.03.2-.05.06-.02.13-.03.2-.03h.14c.14 0 .29.03.42.09.13.06.26.15.36.26.1.11.18.25.24.4.06.15.09.3.09.47v.03c-.02.26-.1.49-.24.69-.14.2-.33.38-.57.52zM20.17 3.83A11.78 11.78 0 0 0 12 2a11.78 11.78 0 0 0-8.17 3.83A11.78 11.78 0 0 0 2 12a11.78 11.78 0 0 0 3.83 8.17A11.78 11.78 0 0 0 12 22a11.78 11.78 0 0 0 8.17-3.83A11.78 11.78 0 0 0 22 12a11.78 11.78 0 0 0-1.83-8.17z"/></svg>;
 
 // Social Media Icons
 const InstagramIcon = () => <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>;
@@ -982,6 +984,7 @@ const memoizedTypewriter = useMemo(() => (
     { icon: <ModelIcon />, title: "Model Training", description: "Build and train various AI models, including neural networks." },
     { icon: <DeployIcon />, title: "Live Deployment", description: "Deploy your trained models as interactive web applications." },
   ];
+
   
   const galleryImages = [
     '/assets/20241012_085651439_iOS.jpg',
@@ -998,7 +1001,7 @@ const memoizedTypewriter = useMemo(() => (
   
   const speakers = [
     {
-      name: 'Ikhwan Iqbal, S.Si., M. Sc.',
+      name: 'Ikhwan Iqbal',
       title: 'CEO Boring AI',
       imageSrc: '/assets/pengajar.png',
       portfolio: 'https://ikhwaniqbal.com/',
@@ -1273,28 +1276,74 @@ const memoizedTypewriter = useMemo(() => (
         <SectionSeparator />
 
         {/* Game Section */}
-        <AnimatedSection id="game" ref={sectionRefs.game}>
-            <CyberpunkGame />
-        </AnimatedSection>
+<AnimatedSection id="game" ref={sectionRefs.game}>
+    <section className="max-w-4xl mx-auto text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-6 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">
+            Ready for a Challenge?
+        </h2>
+        <p className="text-slate-300 text-base md:text-lg leading-relaxed mb-8">
+            While you wait for the bootcamp to begin, test your reflexes in our cyberpunk-themed mini-game. Navigate the data stream, avoid the firewalls, and see how high you can score!
+        </p>
+        <CyberpunkGame />
+    </section>
+</AnimatedSection>
       </main>
-                    
-      {/* Footer */}
-      <footer className="bg-[#0d0d0d] border-t border-slate-800 py-8 md:py-12 text-center text-slate-500 relative z-10 mt-20">
-        <div className="max-w-6xl mx-auto px-4">
-            <p className="mb-6 text-sm md:text-base">&copy; {new Date().getFullYear()} Himpunan Mahasiswa Teknik Informatika (HIMTI). All Rights Reserved.</p>
-            
-            <div className="flex justify-center items-center gap-4 md:gap-6 flex-wrap">
-                <a href="https://ofog.himtibinus.or.id/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="Website"><WebsiteIcon /></a>
-                <a href="https://www.instagram.com/himti.mlg/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="Instagram"><InstagramIcon /></a>
-                <a href="https://student-activity.binus.ac.id/himti/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="Binus University">
-                    <img src="https://upload.wikimedia.org/wikipedia/id/a/a2/Logo_Binus_University.png" alt="Binus University Logo" className="w-5 h-5 md:w-6 md:h-6 object-contain filter grayscale hover:grayscale-0 transition-all" />
-                </a>
-                <a href="https://www.linkedin.com/company/himti-binus-university/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="LinkedIn"><LinkedinIcon /></a>
-                <a href="https://x.com/HimtiBinus" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="X"><XIcon /></a>
-                <a href="https://www.facebook.com/himtibinus?locale=id_ID" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="Facebook"><FacebookIcon /></a>
+
+<footer className="bg-[#0d0d0d] border-t border-slate-800 py-10 md:py-16 text-center text-slate-500 relative z-10 mt-20">
+    <div className="max-w-6xl mx-auto px-4">
+        {/* New Contact Section */}
+        <div className="mb-10">
+            <h3 className="text-lg font-bold text-cyan-300 mb-2">Have Questions?</h3>
+            <p className="text-slate-400 mb-6 max-w-2xl mx-auto">
+                If you need more information about the registration process, schedule, or bootcamp materials, please don't hesitate to reach out to our team.
+            </p>
+            <div className="flex flex-col md:flex-row justify-center items-center gap-x-8 gap-y-6">
+                {/* Calista */}
+                <div className="flex flex-col items-center">
+                    <p className="font-semibold text-white text-lg">Calista</p>
+                    <a 
+                        href="https://wa.me/6287812231471"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center mt-1 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600/80 hover:bg-green-700/80 transition-all transform hover:scale-105"
+                    >
+                        <WhatsappIcon />
+                        +62 878-1223-1471
+                    </a>
+                </div>
+                {/* Flou */}
+                <div className="flex flex-col items-center">
+                    <p className="font-semibold text-white text-lg">Flou</p>
+                    <a 
+                        href="https://wa.me/62895341740988"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center mt-1 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600/80 hover:bg-green-700/80 transition-all transform hover:scale-105"
+                    >
+                        <WhatsappIcon />
+                        +62 895-3417-40988
+                    </a>
+                </div>
             </div>
         </div>
-      </footer>
+
+        {/* Horizontal Separator */}
+        <div className="w-1/3 mx-auto border-t border-slate-700 my-8"></div>
+
+        {/* Original Footer Content */}
+        <div className="flex justify-center items-center gap-4 md:gap-6 flex-wrap mb-6">
+            <a href="https://ofog.himtibinus.or.id/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="Website"><WebsiteIcon /></a>
+            <a href="https://www.instagram.com/himti.mlg/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="Instagram"><InstagramIcon /></a>
+            <a href="https://student-activity.binus.ac.id/himti/" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="Binus University">
+                <img src="https://upload.wikimedia.org/wikipedia/id/a/a2/Logo_Binus_University.png" alt="Binus University Logo" className="w-5 h-5 md:w-6 md:h-6 object-contain filter grayscale hover:grayscale-0 transition-all" />
+            </a>
+            <a href="https://www.linkedin.com/company/himti-binus-university/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="LinkedIn"><LinkedinIcon /></a>
+            <a href="https://x.com/HimtiBinus" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="X"><XIcon /></a>
+            <a href="https://www.facebook.com/himtibinus?locale=id_ID" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-cyan-400 transition-colors transform hover:scale-110" title="Facebook"><FacebookIcon /></a>
+        </div>
+        <p className="text-sm md:text-base">&copy; {new Date().getFullYear()} Himpunan Mahasiswa Teknik Informatika (HIMTI). All Rights Reserved.</p>
+    </div>
+</footer>
     </div>
   );
 }
