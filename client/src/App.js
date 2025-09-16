@@ -436,7 +436,7 @@ const RegistrationForm = ({ onSuccessfulRegistration, isRegistrationOpen, isLoad
     }
   };
 
-  const handlePreSubmit = (e) => {
+ const handlePreSubmit = (e) => {
     e.preventDefault();
     setMessage(null);
 
@@ -453,7 +453,6 @@ const RegistrationForm = ({ onSuccessfulRegistration, isRegistrationOpen, isLoad
 
     if (/\d/.test(formData.fullName)) { setMessage({ type: 'error', text: 'Full name cannot contain numbers.' }); return; }
     if (isNaN(parseInt(formData.nim))) { setMessage({ type: 'error', text: 'NIM must be a number.' }); return; }
-    if (formData.nim.length !== 10) { setMessage({ type: 'error', text: 'NIM must be exactly 10 digits.' }); return; }
     if (!formData.binusianEmail.endsWith('@binus.ac.id')) { setMessage({ type: 'error', text: 'Please use a valid Binusian email ending with @binus.ac.id.' }); return; }
     if (formData.privateEmail === formData.binusianEmail) { setMessage({ type: 'error', text: 'Private email cannot be the same as your Binusian email.' }); return; }
     if (!formData.phone.startsWith('08')) { setMessage({ type: 'error', text: 'Phone number must start with "08".' }); return; }
