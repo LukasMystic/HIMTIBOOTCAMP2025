@@ -391,6 +391,8 @@ function AdminPage() {
                             { label: 'Name', key: 'name' },
                             { label: 'NIM', key: 'nim' },
                             { label: 'Binusian Email', key: 'binusianEmail' },
+                            { label: 'Private Email', key: 'privateEmail' },
+                            { label: 'Phone', key: 'phone' },
                             { label: 'Payment Proof', key: 'imageUrl' },
                             { label: 'Major', key: 'major' },
                             { label: 'Actions', key: null }
@@ -408,7 +410,7 @@ function AdminPage() {
                         </thead>
                             <tbody className="divide-y divide-slate-800">
                                 {isLoading ? (
-                                    <tr><td colSpan="7" className="text-center py-4">Loading data...</td></tr>
+                                    <tr><td colSpan="9" className="text-center py-4">Loading data...</td></tr>
                                 ) : [...participants].sort((a, b) => {
                                         if (!sortConfig.key) return 0;
                                         const valA = (a[sortConfig.key] || '').toString().toLowerCase();
@@ -422,6 +424,8 @@ function AdminPage() {
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.name}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.nim}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">{p.binusianEmail}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">{p.privateEmail}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm">{p.phone}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                             {p.imageUrl ? (
                                                 <a href={p.imageUrl} target="_blank" rel="noopener noreferrer">
