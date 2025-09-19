@@ -1026,11 +1026,10 @@ const memoizedTypewriter = useMemo(() => (
     { question: 'What software will I need?', answer: 'You will need a stable internet connection, a modern web browser, and a code editor like VS Code. We will be using cloud-based environments like Google Colab for most of the coding, so no powerful local machine is required.' },
   ];
 
-  const sponsors = [
-    { name: 'Sponsor 1', logoSrc: '/assets/himdkv.png', url: 'https://student-activity.binus.ac.id/himdkv/' },
-    { name: 'Sponsor 2', logoSrc: '/assets/bncc.png', url: 'https://bncc.net/' },
+ const sponsors = [
+    { name: 'HIMDKV', logoSrc: '/assets/himdkv.png', url: 'https://student-activity.binus.ac.id/himdkv/', style: 'square' },
+    { name: 'BNCC', logoSrc: '/assets/bncc.png', url: 'https://bncc.net/', style: 'landscape' },
 ];
-
   const path = window.location.pathname;
   if (path === '/admin') {
     return <AdminPage />;
@@ -1253,26 +1252,36 @@ const memoizedTypewriter = useMemo(() => (
 
         <SectionSeparator />
 
-        {/* Sponsors Section */}
-        <AnimatedSection animationType="slide-up">
-            <section className="max-w-6xl mx-auto text-center">
-                <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Media Partners</h2>
-                <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8">
-   {sponsors.map((sponsor, index) => (
-    <a 
-        key={index} 
-        href={sponsor.url} 
-        target="_blank" 
-        rel="noopener noreferrer"
-    >
-        <div className={`p-4 md:p-6 bg-white rounded-xl border border-slate-700 hover:border-slate-500 transition-all card-hover animate-slide-up stagger-${index + 1}`}>
-           <img src={sponsor.logoSrc} alt={sponsor.name} className="h-8 md:h-12 object-contain transition-all duration-300" />
-        </div>
-    </a>
-))}
+{/* Sponsors Section */}
+<AnimatedSection animationType="slide-up">
+    <section className="max-w-6xl mx-auto text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Media Partners</h2>
+        <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8">
+   {sponsors.map((sponsor, index) => {
+    const containerClasses = sponsor.style === 'square'
+        ? 'w-24 h-24' 
+        : 'w-48 h-24'; 
+    
+    return (
+        <a 
+            key={index} 
+            href={sponsor.url} 
+            target="_blank" 
+            rel="noopener noreferrer"
+        >
+            <div className={`${containerClasses} flex items-center justify-center p-3 bg-white rounded-xl border border-slate-700 hover:border-slate-500 transition-all card-hover animate-slide-up stagger-${index + 1}`}>
+               <img 
+                   src={sponsor.logoSrc} 
+                   alt={sponsor.name} 
+                   className="max-h-full max-w-full object-contain transition-all duration-300" 
+               />
+            </div>
+        </a>
+    );
+   })}
 </div>
-            </section>
-        </AnimatedSection> 
+    </section>
+</AnimatedSection>
         
         <SectionSeparator />
 
