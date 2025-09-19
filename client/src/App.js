@@ -1026,12 +1026,10 @@ const memoizedTypewriter = useMemo(() => (
     { question: 'What software will I need?', answer: 'You will need a stable internet connection, a modern web browser, and a code editor like VS Code. We will be using cloud-based environments like Google Colab for most of the coding, so no powerful local machine is required.' },
   ];
 
-//   const sponsors = [
-//       { name: 'Sponsor 1', logoSrc: 'https://placehold.co/200x100/ffffff/0d0d0d?text=SPONSOR+A' },
-//       { name: 'Sponsor 2', logoSrc: 'https://placehold.co/200x100/ffffff/0d0d0d?text=SPONSOR+B' },
-//       { name: 'Sponsor 3', logoSrc: 'https://placehold.co/200x100/ffffff/0d0d0d?text=PARTNER+C' },
-//       { name: 'Sponsor 4', logoSrc: 'https://placehold.co/200x100/ffffff/0d0d0d?text=PARTNER+D' },
-//   ];
+  const sponsors = [
+    { name: 'Sponsor 1', logoSrc: '/assets/himdkv.png', url: 'https://student-activity.binus.ac.id/himdkv/' },
+    { name: 'Sponsor 2', logoSrc: '/assets/bncc.png', url: 'https://bncc.net/' },
+];
 
   const path = window.location.pathname;
   if (path === '/admin') {
@@ -1256,18 +1254,25 @@ const memoizedTypewriter = useMemo(() => (
         <SectionSeparator />
 
         {/* Sponsors Section */}
-        {/* <AnimatedSection animationType="slide-up">
+        <AnimatedSection animationType="slide-up">
             <section className="max-w-6xl mx-auto text-center">
-                <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Sponsors & Media Partners</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 justify-items-center">
-                    {sponsors.map((sponsor, index) => (
-                        <div key={index} className={`p-4 md:p-6 bg-slate-900/50 rounded-xl border border-slate-700 hover:border-slate-500 transition-all card-hover animate-slide-up stagger-${index + 1}`}>
-                           <img src={sponsor.logoSrc} alt={sponsor.name} className="h-8 md:h-12 object-contain filter grayscale hover:grayscale-0 transition-all duration-300" />
-                        </div>
-                    ))}
-                </div>
+                <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Media Partners</h2>
+                <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8">
+   {sponsors.map((sponsor, index) => (
+    <a 
+        key={index} 
+        href={sponsor.url} 
+        target="_blank" 
+        rel="noopener noreferrer"
+    >
+        <div className={`p-4 md:p-6 bg-white rounded-xl border border-slate-700 hover:border-slate-500 transition-all card-hover animate-slide-up stagger-${index + 1}`}>
+           <img src={sponsor.logoSrc} alt={sponsor.name} className="h-8 md:h-12 object-contain transition-all duration-300" />
+        </div>
+    </a>
+))}
+</div>
             </section>
-        </AnimatedSection> */}
+        </AnimatedSection> 
         
         <SectionSeparator />
 
