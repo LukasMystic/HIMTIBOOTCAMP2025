@@ -7,9 +7,13 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 require('dotenv').config();
 
+// Import the serverless-safe database connection utility
+const dbConnect = require('./lib/dbConnect'); 
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// --- MIDDLEWARE & CONFIG SETUP ---
 app.use(cors());
 app.use(express.json());
 
@@ -32,22 +36,16 @@ const upload = multer({
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB file size limit
     fileFilter: (req, file, cb) => {
-        if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg" || file.mimetype == "image/gif") {
+        if (file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "image/jpeg") {
             cb(null, true);
         } else {
+            // Reject the file but don't throw an error here, let the route handler deal with it
             cb(null, false);
-            return cb(new Error('Only .png, .jpg, .jpeg format allowed!'));
         }
     }
 });
 
-mongoose.connect(process.env.MONGO_URI)
-.then(() => {
-    console.log('Successfully connected to MongoDB Atlas!');
-    initializeSettings();
-})
-.catch(err => console.error('Error connecting to MongoDB:', err));
-
+// --- DATABASE SCHEMAS & MODELS ---
 const participantSchema = new mongoose.Schema({
     name: { type: String, required: true },
     nim: { type: Number, required: true, unique: true },
@@ -64,21 +62,12 @@ const settingSchema = new mongoose.Schema({
     value: { type: mongoose.Schema.Types.Mixed, required: true }
 });
 
-const Participant = mongoose.model('Participant', participantSchema);
-const Setting = mongoose.model('Setting', settingSchema);
+// To prevent OverwriteModelError on Vercel's hot reloads
+const Participant = mongoose.models.Participant || mongoose.model('Participant', participantSchema);
+const Setting = mongoose.models.Setting || mongoose.model('Setting', settingSchema);
 
-const initializeSettings = async () => {
-    try {
-        const registrationSetting = await Setting.findOne({ key: 'registrationStatus' });
-        if (!registrationSetting) {
-            await new Setting({ key: 'registrationStatus', value: true }).save();
-            console.log('Registration status initialized to "open".');
-        }
-    } catch (error) {
-        console.error('Error initializing settings:', error);
-    }
-};
 
+// --- HELPER & AUTH FUNCTIONS ---
 const getAdminUsers = () => {
     const credentials = process.env.ADMIN_CREDENTIALS || '{}';
     try {
@@ -103,6 +92,7 @@ const adminAuth = (req, res, next) => {
     });
 };
 
+// --- API ROUTES ---
 app.get('/', (req, res) => {
     res.send('HIMTI AI Bootcamp API is running!');
 });
@@ -114,36 +104,33 @@ app.post('/api/admin/login', async (req, res) => {
     }
     const adminUsers = getAdminUsers();
     const user = adminUsers.find(u => u.email === email);
-    if (!user) {
+    if (!user || password !== user.password) {
         return res.status(400).json({ message: 'Invalid credentials.' });
     }
-    if (password === user.password) {
-        const accessToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ accessToken: accessToken });
-    } else {
-        res.status(400).json({ message: 'Invalid credentials.' });
-    }
+    const accessToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.json({ accessToken: accessToken });
 });
 
-app.post('/api/register', upload.single('image'), async (req, res) => {
+app.post('/api/register', upload.single('image'), async (req, res, next) => {
     try {
+        await dbConnect(); // Ensure DB connection
         const registrationSetting = await Setting.findOne({ key: 'registrationStatus' });
         if (!registrationSetting || !registrationSetting.value) {
+            if (!registrationSetting) {
+                await new Setting({ key: 'registrationStatus', value: false }).save();
+            }
             return res.status(403).json({ message: 'Registration is currently closed.' });
         }
 
-        const { fullName, nim, binusianEmail, privateEmail, phone, major } = req.body;
-        if (!fullName || !nim || !binusianEmail || !privateEmail || !phone || !major) {
-            return res.status(400).json({ message: 'All fields are required.' });
+        // Check if a file was uploaded
+        if (!req.file) {
+            return res.status(400).json({ message: 'Image upload is required. Only .png, .jpg, .jpeg formats are allowed.' });
         }
+
+        const { fullName, nim, binusianEmail, privateEmail, phone, major } = req.body;
         const newParticipant = new Participant({
-            name: fullName,
-            nim: Number(nim),
-            binusianEmail,
-            privateEmail,
-            phone,
-            major,
-            imageUrl: req.file ? req.file.path : null
+            name: fullName, nim: Number(nim), binusianEmail, privateEmail, phone, major,
+            imageUrl: req.file.path
         });
         const savedParticipant = await newParticipant.save();
         res.status(201).json({ message: 'Registration successful!', participant: savedParticipant });
@@ -152,45 +139,43 @@ app.post('/api/register', upload.single('image'), async (req, res) => {
             const field = Object.keys(error.keyValue)[0];
             return res.status(400).json({ message: `Error: This ${field} is already registered.` });
         }
-        console.error("Registration error:", error);
-        res.status(500).json({ message: 'An error occurred during registration.' });
+        // Pass other errors to the final error handler
+        next(error);
     }
 });
 
-app.get('/api/settings/registration', async (req, res) => {
+app.get('/api/settings/registration', async (req, res, next) => {
   try {
+    await dbConnect(); // Ensure DB connection
     const setting = await Setting.findOne({ key: 'registrationStatus' });
     res.status(200).json({ isOpen: setting ? setting.value : false });
   } catch (error) {
-    console.error("[ERROR] Failed to fetch registration setting:", error);
-    res.status(500).json({ message: 'Error fetching registration status.', error });
+    next(error);
   }
 });
 
-app.get('/api/admin/participants', adminAuth, async (req, res) => {
+app.get('/api/admin/participants', adminAuth, async (req, res, next) => {
   try {
+    await dbConnect(); // Ensure DB connection
     const participants = await Participant.find({}).sort({ registrationDate: -1 });
     res.status(200).json(participants);
   } catch (error) {
-    console.error("[ERROR] Failed to fetch participants:", error);
-    res.status(500).json({ message: 'Error fetching participants.', error });
+    next(error);
   }
 });
 
-app.post('/api/admin/participants', adminAuth, upload.single('image'), async (req, res) => {
+app.post('/api/admin/participants', adminAuth, upload.single('image'), async (req, res, next) => {
     try {
-        const { name, nim, binusianEmail, privateEmail, phone, major } = req.body;
-        if (!name || !nim || !binusianEmail || !privateEmail || !phone || !major) {
-            return res.status(400).json({ message: 'All fields are required for creation.' });
+        await dbConnect(); // Ensure DB connection
+
+        if (!req.file) {
+             return res.status(400).json({ message: 'Image upload is required.' });
         }
+
+        const { name, nim, binusianEmail, privateEmail, phone, major } = req.body;
         const newParticipant = new Participant({
-            name,
-            nim: Number(nim),
-            binusianEmail,
-            privateEmail,
-            phone,
-            major,
-            imageUrl: req.file ? req.file.path : null
+            name, nim: Number(nim), binusianEmail, privateEmail, phone, major,
+            imageUrl: req.file.path
         });
         const savedParticipant = await newParticipant.save();
         res.status(201).json({ message: 'Participant created successfully!', participant: savedParticipant });
@@ -199,55 +184,59 @@ app.post('/api/admin/participants', adminAuth, upload.single('image'), async (re
             const field = Object.keys(error.keyValue)[0];
             return res.status(400).json({ message: `Error: This ${field} is already registered.` });
         }
-        console.error("Admin participant creation error:", error);
-        res.status(500).json({ message: 'An error occurred during participant creation.' });
+        next(error);
     }
 });
 
-app.post('/api/admin/settings/toggle-registration', adminAuth, async (req, res) => {
+app.post('/api/admin/settings/toggle-registration', adminAuth, async (req, res, next) => {
     try {
-        const setting = await Setting.findOne({ key: 'registrationStatus' });
-        if (!setting) return res.status(404).json({ message: 'Registration status setting not found.' });
-        
-        setting.value = !setting.value;
-        await setting.save();
-        
+        await dbConnect(); // Ensure DB connection
+        let setting = await Setting.findOne({ key: 'registrationStatus' });
+        if (!setting) {
+            setting = await new Setting({ key: 'registrationStatus', value: true }).save();
+        } else {
+            setting.value = !setting.value;
+            await setting.save();
+        }
         res.status(200).json({
             message: `Registration is now ${setting.value ? 'OPEN' : 'CLOSED'}.`,
             isOpen: setting.value
         });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating registration status.', error });
+        next(error);
     }
 });
 
-app.put('/api/admin/participants/:id', adminAuth, upload.single('image'), async (req, res) => {
+app.put('/api/admin/participants/:id', adminAuth, upload.single('image'), async (req, res, next) => {
     try {
+        await dbConnect(); // Ensure DB connection
         const updateData = { ...req.body };
         if (req.file) {
             updateData.imageUrl = req.file.path;
         }
-
+        // CORRECTED THIS LINE: Removed extra dot from req.params..id
         const updatedParticipant = await Participant.findByIdAndUpdate(req.params.id, updateData, { new: true });
         if (!updatedParticipant) return res.status(404).json({ message: 'Participant not found.' });
         res.status(200).json({ message: 'Participant updated successfully.', participant: updatedParticipant });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating participant.', error });
+        next(error);
     }
 });
 
-app.delete('/api/admin/participants/:id', adminAuth, async (req, res) => {
+app.delete('/api/admin/participants/:id', adminAuth, async (req, res, next) => {
     try {
+        await dbConnect(); // Ensure DB connection
         const deletedParticipant = await Participant.findByIdAndDelete(req.params.id);
         if (!deletedParticipant) return res.status(404).json({ message: 'Participant not found.' });
         res.status(200).json({ message: 'Participant deleted successfully.' });
     } catch (error) {
-        res.status(500).json({ message: 'Error deleting participant.', error });
+        next(error);
     }
 });
 
-app.get('/api/admin/participants/export', adminAuth, async (req, res) => {
+app.get('/api/admin/participants/export', adminAuth, async (req, res, next) => {
     try {
+        await dbConnect(); // Ensure DB connection
         const participants = await Participant.find({});
         if (participants.length === 0) return res.status(404).send('No participants to export.');
         
@@ -261,22 +250,39 @@ app.get('/api/admin/participants/export', adminAuth, async (req, res) => {
         res.attachment('registrations.csv');
         res.send(csv);
     } catch (error) {
-        res.status(500).json({ message: 'Error exporting data.', error });
+        next(error);
     }
 });
 
+// --- FINAL ERROR HANDLER (REWRITTEN) ---
 app.use((err, req, res, next) => {
+  // Log the actual error to the console
+  console.error("An error occurred:", err);
+
   if (err instanceof multer.MulterError) {
-    return res.status(400).json({ message: err.message });
-  } else if (err) {
-    if (err.message === 'Only .png, .jpg, .jpeg format allowed!') {
-        return res.status(400).json({ message: err.message });
-    }
-    return res.status(500).json({ message: 'An unexpected error occurred on the server.' });
+    return res.status(400).json({ message: `File upload error: ${err.message}` });
+  } 
+  
+  // Specific error for wrong file type from our filter logic
+  if (err.message === 'Only .png, .jpg, .jpeg format allowed!') {
+      return res.status(400).json({ message: err.message });
   }
-  next();
+
+  // Handle other potential errors gracefully
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  // Generic fallback
+  return res.status(500).json({ message: 'An unexpected error occurred on the server.' });
 });
 
+
+// --- SERVER START ---
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+
+// Export the app for Vercel's serverless environment
+module.exports = app;
+

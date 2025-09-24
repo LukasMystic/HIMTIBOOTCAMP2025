@@ -1026,7 +1026,13 @@ const memoizedTypewriter = useMemo(() => (
     { question: 'What software will I need?', answer: 'You will need a stable internet connection, a modern web browser, and a code editor like VS Code. We will be using cloud-based environments like Google Colab for most of the coding, so no powerful local machine is required.' },
   ];
 
+ // NOTE: Add your real sponsor logos and links here. These are placeholders.
  const sponsors = [
+    { name: 'Dicoding', logoSrc: '/assets/dicoding.png', url: 'https://www.dicoding.com/', style: 'landscape' },
+  
+ ];
+
+ const mediaPartners = [
     { name: 'HIMDKV', logoSrc: '/assets/himdkv.png', url: 'https://student-activity.binus.ac.id/himdkv/', style: 'square' },
     { name: 'BNCC', logoSrc: '/assets/bncc.png', url: 'https://bncc.net/', style: 'landscape' },
 ];
@@ -1254,32 +1260,70 @@ const memoizedTypewriter = useMemo(() => (
 
 {/* Sponsors Section */}
 <AnimatedSection animationType="slide-up">
-    <section className="max-w-6xl mx-auto text-center">
+    {/* Using max-w-4xl here to make the container a bit smaller */}
+    <section className="max-w-4xl mx-auto text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Our Sponsors</h2>
+        <div className="flex flex-wrap justify-center items-start gap-8 md:gap-12">
+            {sponsors.map((sponsor, index) => {
+                // Slightly larger container classes
+                const containerClasses = sponsor.style === 'square'
+                    ? 'w-32 h-32' 
+                    : 'w-56 h-32'; 
+                
+                return (
+                    // Each item is now a flex column to hold the logo and name
+                    <div key={index} className={`flex flex-col items-center gap-3 animate-slide-up stagger-${index + 1}`}>
+                        <a href={sponsor.url} target="_blank" rel="noopener noreferrer">
+                            <div className={`${containerClasses} flex items-center justify-center p-3 bg-white rounded-xl border border-slate-700 hover:border-slate-500 transition-all card-hover`}>
+                               <img 
+                                   src={sponsor.logoSrc} 
+                                   alt={sponsor.name} 
+                                   className="max-h-full max-w-full object-contain transition-all duration-300" 
+                               />
+                            </div>
+                        </a>
+                        {/* Added the name below the logo */}
+                        <p className="text-slate-300 font-semibold">{sponsor.name}</p>
+                    </div>
+                );
+            })}
+        </div>
+
+    </section>
+</AnimatedSection>
+
+<SectionSeparator />
+
+{/* Media Partners Section */}
+<AnimatedSection animationType="slide-up">
+    {/* Using max-w-4xl here as well */}
+    <section className="max-w-4xl mx-auto text-center">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Media Partners</h2>
-        <div className="flex flex-wrap justify-center items-center gap-6 md:gap-8">
-   {sponsors.map((sponsor, index) => {
-    const containerClasses = sponsor.style === 'square'
-        ? 'w-24 h-24' 
-        : 'w-48 h-24'; 
-    
-    return (
-        <a 
-            key={index} 
-            href={sponsor.url} 
-            target="_blank" 
-            rel="noopener noreferrer"
-        >
-            <div className={`${containerClasses} flex items-center justify-center p-3 bg-white rounded-xl border border-slate-700 hover:border-slate-500 transition-all card-hover animate-slide-up stagger-${index + 1}`}>
-               <img 
-                   src={sponsor.logoSrc} 
-                   alt={sponsor.name} 
-                   className="max-h-full max-w-full object-contain transition-all duration-300" 
-               />
-            </div>
-        </a>
-    );
-   })}
-</div>
+        <div className="flex flex-wrap justify-center items-start gap-8 md:gap-12">
+            {mediaPartners.map((partner, index) => {
+                // Slightly larger container classes
+                const containerClasses = partner.style === 'square'
+                    ? 'w-32 h-32' 
+                    : 'w-56 h-32'; 
+                
+                return (
+                    // Each item is now a flex column to hold the logo and name
+                    <div key={index} className={`flex flex-col items-center gap-3 animate-slide-up stagger-${index + 1}`}>
+                        <a href={partner.url} target="_blank" rel="noopener noreferrer">
+                            <div className={`${containerClasses} flex items-center justify-center p-3 bg-white rounded-xl border border-slate-700 hover:border-slate-500 transition-all card-hover`}>
+                               <img 
+                                   src={partner.logoSrc} 
+                                   alt={partner.name} 
+                                   className="max-h-full max-w-full object-contain transition-all duration-300" 
+                               />
+                            </div>
+                        </a>
+                        {/* Added the name below the logo */}
+                        <p className="text-slate-300 font-semibold">{partner.name}</p>
+                    </div>
+                );
+            })}
+        </div>
     </section>
 </AnimatedSection>
         
