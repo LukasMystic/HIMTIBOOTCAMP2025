@@ -1027,10 +1027,10 @@ const memoizedTypewriter = useMemo(() => (
   ];
 
  // NOTE: Add your real sponsor logos and links here. These are placeholders.
- const sponsors = [
-    { name: 'Dicoding', logoSrc: '/assets/dicoding.png', url: 'https://www.dicoding.com/', style: 'landscape' },
+//  const sponsors = [
+//     { name: 'Dicoding', logoSrc: '/assets/dicoding.png', url: 'https://www.dicoding.com/', style: 'landscape' },
   
- ];
+//  ];
 
  const mediaPartners = [
     { name: 'HIMDKV', logoSrc: '/assets/himdkv.png', url: 'https://student-activity.binus.ac.id/himdkv/', style: 'square' },
@@ -1255,23 +1255,19 @@ const memoizedTypewriter = useMemo(() => (
                 </div>
             </section>
         </AnimatedSection>
+{/*
+<SectionSeparator />
 
-        <SectionSeparator />
-
-{/* Sponsors Section */}
 <AnimatedSection animationType="slide-up">
-    {/* Using max-w-4xl here to make the container a bit smaller */}
     <section className="max-w-4xl mx-auto text-center">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-cyan-400">Our Sponsors</h2>
         <div className="flex flex-wrap justify-center items-start gap-8 md:gap-12">
             {sponsors.map((sponsor, index) => {
-                // Slightly larger container classes
                 const containerClasses = sponsor.style === 'square'
                     ? 'w-32 h-32' 
                     : 'w-56 h-32'; 
                 
                 return (
-                    // Each item is now a flex column to hold the logo and name
                     <div key={index} className={`flex flex-col items-center gap-3 animate-slide-up stagger-${index + 1}`}>
                         <a href={sponsor.url} target="_blank" rel="noopener noreferrer">
                             <div className={`${containerClasses} flex items-center justify-center p-3 bg-white rounded-xl border border-slate-700 hover:border-slate-500 transition-all card-hover`}>
@@ -1282,7 +1278,6 @@ const memoizedTypewriter = useMemo(() => (
                                />
                             </div>
                         </a>
-                        {/* Added the name below the logo */}
                         <p className="text-slate-300 font-semibold">{sponsor.name}</p>
                     </div>
                 );
@@ -1291,8 +1286,7 @@ const memoizedTypewriter = useMemo(() => (
 
     </section>
 </AnimatedSection>
-
-<SectionSeparator />
+*/}
 
 {/* Media Partners Section */}
 <AnimatedSection animationType="slide-up">
